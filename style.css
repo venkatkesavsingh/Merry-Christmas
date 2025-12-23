@@ -1,0 +1,100 @@
+body {
+    margin: 0;
+    min-height: 100svh;
+    background-image: url(Untitled\ design\ \(1\).png);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    color: #fff;
+}
+
+.container {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    border-radius: 12px;
+    box-shadow: white 0 0 10px 2px;
+    padding: 3rem;
+    z-index: 10;
+}
+
+/* Default (laptop / desktop) */
+h1 {
+    color: red;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: clamp(1.5rem, 3vw, 3rem);
+    margin-bottom: 1rem;
+}
+
+.timer {
+    color: red;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: clamp(3rem, 6vw, 6rem);
+    margin-top: 0.5rem;
+}
+
+small {
+    color: white;
+    text-shadow: black 1px 1px 1px;
+    font-weight: bolder;
+    display: block;
+    margin-top: 2rem;
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* 📱 Mobile */
+@media (max-width: 768px) {
+    h1 {
+        font-size: clamp(1.2rem, 5vw, 2rem);
+    }
+
+    .timer {
+        font-size: clamp(2.5rem, 12vw, 4rem);
+    }
+}
+
+/* 🖥️ 4K & Ultra-wide Screens */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1250px;
+    }
+
+    h1 {
+        font-size: 4rem;
+    }
+
+    .timer {
+        font-size: 8rem;
+    }
+
+    small {
+        font-size: 1.2rem;
+    }
+}
+
+
+#snow {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    pointer-events: none;
+    z-index: 5;
+}
+
+@keyframes jitter {
+    0%   { transform: translate(0); }
+    20%  { transform: translate(-4px, 2px); }
+    40%  { transform: translate(4px, -2px); }
+    60%  { transform: translate(-2px, 4px); }
+    80%  { transform: translate(3px, -4px); }
+    100% { transform: translate(0); }
+}
+
+.container.jitter {
+    animation: jitter 0.9s ease-in-out;
+}
