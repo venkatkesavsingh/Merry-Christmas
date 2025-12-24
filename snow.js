@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        initGround();
+        initGround(); 
     }
     window.addEventListener("resize", resize);
 
@@ -72,11 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     for (let i = 0; i < COUNT; i++) flakes.push(createFlake(Math.random() * canvas.height));
 
-    let wind = 0;
-    setInterval(() => {
-        wind = (Math.random() - 0.5) * 0.3;
-    }, 4000);
-
     function addToGround(x, intensity = 4.5) {
         const index = Math.floor(x / segmentWidth);
         if (index >= 0 && index < groundSegments.length) {
@@ -107,14 +102,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const rect = container.getBoundingClientRect();
-        
+
         applySink();
 
         // 1. Regular Falling Snow (Background)
         flakes.forEach(f => {
-            f.y += f.vy;
-            f.x += f.vx + wind;
-
+            f.y += f.vy; f.x += f.vx;
 
             // Hit Container (Only accumulates, does not pass through)
             if (f.y >= rect.top - 5 && f.y <= rect.top + 5 && f.x >= rect.left && f.x <= rect.right) {
@@ -126,29 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Hit Ground
-            const gIdx = Math.max(
-            0,
-                Math.min(
-                groundSegments.length - 1,
-                Math.floor(f.x / segmentWidth)
-                )
-            );
+            const gIdx = Math.floor(f.x / segmentWidth);
+            if (f.y > canvas.height - (groundSegments[gIdx] || 0)) {
+                addToGround(f.x);
+                Object.assign(f, createFlake());
+            }
 
             // DRAW FLAKE (Check if it's in front of container)
             // If you want it behind, you can skip drawing if it's within rect bounds
-            // Skip drawing flakes that are behind the container
-            const insideContainer =
-            f.x > rect.left &&
-            f.x < rect.right &&
-            f.y > rect.top &&
-            f.y < rect.bottom;
-
-            if (!insideContainer) {
-                ctx.beginPath();
-                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-                ctx.fillStyle = "white";
-                ctx.fill();
-            }
+            ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+            ctx.fillStyle = "white"; ctx.fill();
         });
 
         // 2. RELEASED SNOW (Only visible after Jitter)
@@ -172,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.lineTo(rect.right, rect.top); ctx.fill();
 
         // 4. Draw Natural Ground Base
-        const grad = ctx.createLinearGradient(0, canvas.height - 120, 0, canvas.height);
+        const grad = ctx.createLinearGradient(0, canvas.height - 75, 0, canvas.height);
         grad.addColorStop(0, "#ffffff");
         grad.addColorStop(1, "#e6edf5"); 
         ctx.fillStyle = grad;
@@ -200,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
         snowCap.forEach((h, i) => {
             if (h > 2) {
                 // Release larger chunks proportional to height
-                for (let j = 0; j < Math.min(6, Math.ceil(h / 8)); j++) {
+                for(let j = 0; j < Math.ceil(h/5); j++) {
                     releasedChunks.push({
                         x: rect.left + i + (Math.random() * 6 - 3), 
                         y: rect.top - h, 
